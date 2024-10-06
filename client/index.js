@@ -1,6 +1,7 @@
 'use strict';
 import { getAllTodos, addTodo, editTodo, deleteTodo } from './api.js';
-console.log("CLIENT");
+
+console.log("CLIENT CONSOLE");
 
 const todoInputEl = document.querySelector(".todo-input");
 const addBtnEl = document.querySelector(".add-btn");
@@ -16,16 +17,14 @@ getAllTodos()
     })
   });
 
-function createTodoItem({text, id}, parent) {
+function createTodoItem({text, _id}, parent) {
   const itemEl = document.createElement("li");
   itemEl.className = "todo-list-item";
-  // const id = 'id' + Date.now();
-  itemEl.id = id;
+  itemEl.id = _id;
   itemEl.innerHTML = `<span class="todo-list-item-text">${text}</span>
     <button class="form-btn edit-btn">Edit</button>
     <button class="form-btn delete-btn">Delete</button>`;
-
-  // todoList.push({ id, text });  
+ 
   parent.append(itemEl);
 }
 
@@ -35,8 +34,8 @@ addBtnEl.addEventListener("click", async () => {
     return;
   }
 
-  const id = await addTodo(newTaskText);
-  const newTask = { id, text: newTaskText };
+  const _id = await addTodo(newTaskText);
+  const newTask = { _id, text: newTaskText };
   todoList.push(newTask);
 
   createTodoItem(newTask, todoListEl);
@@ -47,7 +46,7 @@ todoListEl.addEventListener("click", async (event) => {
   event.stopPropagation();
   const { target } = event;
   const todoItemEl = target.closest(".todo-list-item");
-  const todoItem = todoList.find(task => task.id === todoItemEl.id);
+  const todoItem = todoList.find(task => task._id === todoItemEl.id);
   
   if (target.classList.contains("delete-btn")) {
     const taskText = todoItemEl.querySelector(".todo-list-item-text").textContent;
@@ -55,12 +54,11 @@ todoListEl.addEventListener("click", async (event) => {
     if (confirm(`Are you sure to delete: ${taskText} ?`)) {
       await deleteTodo(todoItemEl.id);
       todoItemEl.remove();
-      todoList = todoList.filter(task => task.id !== todoItemEl.id);
+      todoList = todoList.filter(task => task._id !== todoItemEl.id);
     }
   }
 
   if (target.classList.contains("edit-btn")) {
-    // console.log("edit");
     const taskText = todoItemEl.querySelector(".todo-list-item-text").textContent;
     todoItemEl.innerHTML = `<input class="todo-list-item-text" value="${taskText}" defaultValue=${taskText}/>
     <button class="form-btn save-btn">Save</button>
@@ -68,7 +66,6 @@ todoListEl.addEventListener("click", async (event) => {
   }
 
   if (target.classList.contains("save-btn")) {
-    // console.log("save");
     const updatedTaskText = target.previousElementSibling.value.trim();
     if (!updatedTaskText) {
       return;
@@ -82,21 +79,8 @@ todoListEl.addEventListener("click", async (event) => {
   }
 
   if (target.classList.contains("cancel-btn")) {
-    console.log("cancel");
-    // const oldTaskText = target.previousElementSibling.previousElementSibling.defaultValue;
-
     todoItemEl.innerHTML = `<span class="todo-list-item-text">${todoItem.text}</span>
     <button class="form-btn edit-btn">Edit</button>
     <button class="form-btn delete-btn">Delete</button>`;
   }
 });
-
-// fetch('/tasks')
-//   .then(response => response.json())
-//   .then(tasks => {
-//     tasks.forEach(t => {
-//         const taskElement = document.createElement('div');
-//         taskElement.textContent = 'Task: ' + t.content;
-//         document.body.append(taskElement);
-//     });
-//   })

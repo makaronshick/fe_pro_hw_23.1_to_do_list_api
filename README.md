@@ -1,4 +1,4 @@
-За допомогою Node.js та Express створити API для TODO списку, яке буде включати в себе:
+За допомогою Node.js та Fastify створити API для TODO списку, яке буде включати в себе:
 
 Create, Read, Update, Delete - методи
 Налаштування CORS
